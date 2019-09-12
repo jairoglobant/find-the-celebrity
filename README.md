@@ -4,11 +4,13 @@ In a team of n people, a celebrity is known by everyone but he/she doesn't know 
 # Compile
 
 execute
-`gradlew build`
+` gradlew build `
 
 # To RUn
 
 execute
-`Java -jar build/libs/`
-
-
+` java -jar build/libs/find-celebrity-1.0.1-SNAPSHOT.jar `
+ in the console should shows 
+ 
+ ` c.f.FindCelebrityApplication             : ********************* START ******************** `
+ ` c.f.FindCelebrityApplication             : ******************** The Celebrity is: Keanu Reevs `
