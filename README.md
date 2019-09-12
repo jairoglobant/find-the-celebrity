@@ -13,8 +13,13 @@
 
 >> ` java -jar build/libs/find-celebrity-1.0.1-SNAPSHOT.jar `
 
-> in the console should shows 
+> On the console should show
+
+ >>` c.f.FindCelebrityApplication             : ********************* START ******************** 
  
- >>` c.f.FindCelebrityApplication             : ********************* START ******************** `
- 
- >>` c.f.FindCelebrityApplication             : ******************** The Celebrity is: Keanu Reevs `
+ >> c.f.FindCelebrityApplication             : ******************** The Celebrity is: Keanu Reevs `
+
+## note
+
+> If there are any Celebrity a Bussines Exception will be throw 
+>> In the class `FindCelebrityApplication.java` you can modify the information saved in database
