@@ -1,0 +1,22 @@
+plugins {
+	id 'org.springframework.boot' version '2.1.8.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+	id 'java'
+}
+
+group = 'com.example'
+version = '1.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+	compile "org.springframework:spring-context:5.1.9.RELEASE"
+    compile("com.h2database:h2:1.4.199")
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.1.8.RELEASE'
+    testImplementation 'junit:junit:4.12'
+    testCompile group: 'org.mockito', name: 'mockito-all', version: '1.9.5'
+}
