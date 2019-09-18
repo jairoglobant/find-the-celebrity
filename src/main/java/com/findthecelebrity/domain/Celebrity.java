@@ -3,45 +3,44 @@ package com.findthecelebrity.domain;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
-import com.findthecelebrity.database.PersonEntity;
-import com.findthecelebrity.database.PersonRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.findthecelebrity.dataproviders.database.Person;
 
 public class Celebrity {
 	
-	private PersonRepository personRepository;
+	private static final Logger log = LoggerFactory.getLogger(Celebrity.class);
 	
-	public Celebrity(PersonRepository personRepository) {
-		this.personRepository = personRepository;
+	
+	private DataProvider dataProvider;
+	
+	public Celebrity(DataProvider dataProvider) {
+		this.dataProvider = dataProvider;
 	}
 	
-	
-	public PersonEntity findTheCelebrity() {
-			Set<PersonEntity> people = StreamSupport.stream(personRepository.findAll().spliterator(),false).collect(Collectors.toSet());
-			
-			List<PersonEntity> peopleWithotKnown = people.stream().filter(person -> hasntKnownPeople(person)).collect(Collectors.toList());
-			List<PersonEntity> celebrity = peopleWithotKnown.stream().filter(person -> isKnownForAll(person,people)).collect(Collectors.toList());
-			if(celebrity.size() == 0 ) {
+	public Person findTheCelebrity() {
+			Set<Person> people = dataProvider.retrivePeople();
+			people.forEach(this::LogPerson);
+			List<Person> celebrity = people.stream().filter(person -> person.getKnownPeople().isEmpty() && isKnownForAll(person, people) ).collect(Collectors.toList());
+			if(celebrity.isEmpty()) {
 				throw new BusinessException("No one Celebrity found");
 			}
-			
 			return celebrity.get(0);
-		
 	}
-
-	private boolean isKnownForAll(PersonEntity celebrity, Set<PersonEntity> people) {
-		for (PersonEntity person : people) {
+	
+	private void LogPerson(Person person) {
+		log.info(person.toString());
+	}
+	
+	private boolean isKnownForAll(Person celebrity, Set<Person> people) {
+		for (Person person : people) {
 			if(person!=celebrity &&  !person.getKnownPeople().contains(celebrity)) {
 				return false;
 			}
 		}
 		return true;
-	}
-
-
-	private boolean hasntKnownPeople(PersonEntity person) {
-		return  person.getKnownPeople()==null || person.getKnownPeople().size() == 0;
 	}
 
 }

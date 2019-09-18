@@ -7,9 +7,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import com.findthecelebrity.database.PersonEntity;
-import com.findthecelebrity.database.PersonRepository;
+import com.findthecelebrity.dataproviders.database.PersonRepository;
+import com.findthecelebrity.domain.BusinessException;
 import com.findthecelebrity.domain.Celebrity;
+import com.findthecelebrity.util.StorePeopleInformation;
 
 @SpringBootApplication
 public class FindCelebrityApplication {
@@ -25,43 +26,14 @@ public class FindCelebrityApplication {
 	public CommandLineRunner demo(PersonRepository repository,Celebrity celebrity) {
 		return (args) -> {
 			log.info("********************* START ********************");
-			savePeopleWithCelebrity(repository);
-			//savePeopleWithoutCelebrity(repository);
-			log.info("******************** The Celebrity is: "+celebrity.findTheCelebrity().getName());
+			StorePeopleInformation.storePeopleWithCelebrity(repository); 
+			//StorePeopleInformation.storePeopleWithoutCelebrity(repository);
+			try {
+				log.info("******************** The Celebrity is: "+celebrity.findTheCelebrity().getName());
+			} catch (BusinessException e) {
+				log.error("******************** Error executing the proccess: "+e.getMessage(),e);
+			}
 		};
-	}
-
-	private void savePeopleWithoutCelebrity(PersonRepository repository) {
-		PersonEntity keanu = new PersonEntity("Keanu Reevs",null);
-		repository.save(keanu);
-		
-		PersonEntity jhon = new PersonEntity("Jhon",null);
-		jhon.addKnownPerson(keanu);
-		repository.save(jhon);
-		
-		PersonEntity matt = new PersonEntity("Matt",null);
-		matt.addKnownPerson(keanu);
-		matt.addKnownPerson(jhon);
-		repository.save(matt);
-		
-		keanu.addKnownPerson(jhon);
-		repository.save(keanu);
-
-	}
-
-	private void savePeopleWithCelebrity(PersonRepository repository) {
-		PersonEntity keanu = new PersonEntity("Keanu Reevs",null);
-		repository.save(keanu);
-		
-		PersonEntity jhon = new PersonEntity("Jhon",null);
-		jhon.addKnownPerson(keanu);
-		repository.save(jhon);
-		
-		PersonEntity matt = new PersonEntity("Matt",null);
-		matt.addKnownPerson(keanu);
-		matt.addKnownPerson(jhon);
-		repository.save(matt);
-		
 	}
 
 }

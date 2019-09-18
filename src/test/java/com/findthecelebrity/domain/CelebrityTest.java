@@ -12,93 +12,75 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.findthecelebrity.database.PersonEntity;
-import com.findthecelebrity.database.PersonRepository;
+import com.findthecelebrity.dataproviders.database.Person;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CelebrityTest {
-	
+
 	@Mock
-	private PersonRepository personRepository;
-	
+	private DataProvider dataProvider;
+
 	private Celebrity celebrity;
-	private PersonEntity celebrityExpected;
+	private Person celebrityExpected;
+	private Set<Person> peopleSet;
 
 	@Before
 	public void init() {
-		celebrity = new Celebrity(personRepository);
+		celebrity = new Celebrity(dataProvider);
+		peopleSet = new HashSet<Person>();
+		when(dataProvider.retrivePeople()).thenReturn(peopleSet);
+	}
+
+	@Test(expected = BusinessException.class)
+	public void anyPersonWithoutKnownPeopleIsExpected() {
+		prepareAnyPersonWithoutKnownPeople();
+		this.celebrity.findTheCelebrity();
 	}
 
 	@Test
-	public void onePersonWithoutKnownPeopleIsExpected() throws Exception {
+	public void oneCelebrityIsExpected() {
 		prepareOneCelebrity();
-		PersonEntity celebrityFound = this.celebrity.findTheCelebrity();
-		assertEquals(celebrityExpected.getKnownPeople(), celebrityFound.getKnownPeople());
-	}
-
-	@Test(expected=BusinessException.class)
-	public void anyPersonWithoutKnownPeopleIsExpected() throws Exception {
-		prepareAnyPersonWithoutKnownPeopleIsExpected();
-		PersonEntity celebrityFound = this.celebrity.findTheCelebrity();
-	}
-	
-	@Test
-	public void oneCelebrityIsExpected() throws Exception {
-		prepareOneCelebrity();
-		PersonEntity celebrityFound = this.celebrity.findTheCelebrity();
+		Person celebrityFound = this.celebrity.findTheCelebrity();
 		assertEquals(celebrityExpected, celebrityFound);
 	}
-	
-	@Test(expected=BusinessException.class)
-	public void noPeople() throws Exception {
-		prepareOnePeople();
-		PersonEntity celebrityFound = this.celebrity.findTheCelebrity();
-	}
-	
-	@Test(expected=BusinessException.class)
-	public void morThanOneCelebrity() throws Exception {
-		prepareTwoCelebrities();
-		PersonEntity celebrityFound = this.celebrity.findTheCelebrity();
+
+	@Test(expected = BusinessException.class)
+	public void noPeople() {
+		this.celebrity.findTheCelebrity();
 	}
 
-	private void prepareAnyPersonWithoutKnownPeopleIsExpected() {
-		Set<PersonEntity> peopleSet = new HashSet<PersonEntity>();
-		PersonEntity person = new PersonEntity("person",null);
-		PersonEntity person2 = new PersonEntity("person",null);
+	@Test(expected = BusinessException.class)
+	public void morThanOneCelebrity() {
+		prepareTwoCelebrities();
+		this.celebrity.findTheCelebrity();
+	}
+
+	private void prepareAnyPersonWithoutKnownPeople() {
+		Person person = new Person("person", null);
+		Person person2 = new Person("person", null);
 		person.addKnownPerson(person2);
 		person2.addKnownPerson(person);
 		peopleSet.add(person);
 		peopleSet.add(person2);
-		when(personRepository.findAll()).thenReturn(peopleSet);
 	}
-	
+
 	private void prepareOneCelebrity() {
-		Set<PersonEntity> peopleSet = new HashSet<PersonEntity>();
-		PersonEntity person = new PersonEntity("person",null);
-		celebrityExpected = new PersonEntity("celebrity",null);
+		Person person = new Person("person", null);
+		celebrityExpected = new Person("celebrity", null);
 		person.addKnownPerson(celebrityExpected);
 		peopleSet.add(celebrityExpected);
 		peopleSet.add(person);
-		when(personRepository.findAll()).thenReturn(peopleSet);
 	}
-	
-	private void prepareOnePeople() {
-		Set<PersonEntity> peopleSet = new HashSet<PersonEntity>();
-		when(personRepository.findAll()).thenReturn(peopleSet);
-	}
-	
+
 	private void prepareTwoCelebrities() {
-		Set<PersonEntity> peopleSet = new HashSet<PersonEntity>();
-		PersonEntity person = new PersonEntity("person",null);
-		PersonEntity  celebrity1 = new PersonEntity("celebrity",null);
-		PersonEntity  celebrity2 = new PersonEntity("celebrity",null);
+		Person person = new Person("person", null);
+		Person celebrity1 = new Person("celebrity", null);
+		Person celebrity2 = new Person("celebrity", null);
 		person.addKnownPerson(celebrity1);
 		person.addKnownPerson(celebrity2);
 		peopleSet.add(celebrity1);
 		peopleSet.add(celebrity2);
 		peopleSet.add(person);
-		when(personRepository.findAll()).thenReturn(peopleSet);
 	}
-	
-	
+
 }

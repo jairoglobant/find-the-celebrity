@@ -1,4 +1,4 @@
-package com.findthecelebrity.database;
+package com.findthecelebrity.dataproviders.database;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -11,23 +11,23 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
 @Entity
-public class PersonEntity {
+public class Person {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private long id;
 	private String name;
 	@ManyToMany(fetch = FetchType.EAGER)
-	private Set<PersonEntity> knownPeople;
+	private Set<Person> knownPeople;
 	
-	public PersonEntity() {}
+	public Person() {}
 	
-	public PersonEntity(String name,Set<PersonEntity> knownPeople) {
+	public Person(String name,Set<Person> knownPeople) {
 		this.name = name;
 		this.knownPeople = knownPeople;
 	}
 
-	public void addKnownPerson(PersonEntity knownPerson) {
+	public void addKnownPerson(Person knownPerson) {
 		if(knownPeople == null) {
 			knownPeople = new HashSet<>();
 		}
@@ -38,11 +38,16 @@ public class PersonEntity {
 		return name;
 	}
 	
-	public Set<PersonEntity> getKnownPeople(){
+	public Set<Person> getKnownPeople(){
 		if(knownPeople == null) {
 			knownPeople = new HashSet<>();
 		}
 		return knownPeople;
+	}
+
+	@Override
+	public String toString() {
+		return "Person [id=" + id + ", name=" + name + ", knownPeople=" + knownPeople.size() + "]";
 	}
 	
 	
