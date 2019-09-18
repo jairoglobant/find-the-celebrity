@@ -47,7 +47,7 @@ public class Person {
 
 	@Override
 	public String toString() {
-		return "Person [id=" + id + ", name=" + name + ", knownPeople=" + knownPeople.size() + "]";
+		return "Person [id=" + id + ", name=" + name + ", knownPeople=" + this.getKnownPeople().size() + "]";
 	}
 	
 	
